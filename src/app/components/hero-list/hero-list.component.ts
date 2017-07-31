@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { HeroComponent } from '../hero/hero.component';
-import HEROES from '../../mock-heroes';
+import { Router } from '@angular/router';
+
+import { Hero } from '../../hero';
+import { HeroService } from '../../hero.service';
 
 @Component({
   selector: 'app-hero-list',
@@ -8,16 +10,28 @@ import HEROES from '../../mock-heroes';
   styleUrls: ['./hero-list.component.css']
 })
 export class HeroListComponent implements OnInit {
-   heroes:any[];
-   selectedHero:HeroComponent;
+   heroes:Hero[];
+   selectedHero:Hero;
 
-  constructor() { }
+  constructor(
+    private router: Router,
+    private heroService: HeroService
+   ) { }
 
-  ngOnInit() {
-    this.heroes = HEROES;
+  getHeroes(): void {
+    this.heroService.getHeroes()
+                    .then(heroes => this.heroes = heroes);
   }
 
-  onSelect(hero:HeroComponent): void {
+  ngOnInit() {
+    this.getHeroes();
+  }
+
+  onSelect(hero:Hero): void {
       this.selectedHero = hero;
     }
+
+   goToDetail(): void {
+     this.router.navigate(['/detail', this.selectedHero.id]);
+   }
 }
